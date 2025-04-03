@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdrawal - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #111827, #0b0f19);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0),
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+            background-size: 40px 40px, 40px 40px, 40px 40px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .stat-card {
+            transition: all 0.3s;
+        }
+        .stat-card:hover {
+            background-color: #374151;
+        }
+        .sidebar {
+            background-color: #1f2937;
+            border-right: 1px solid #374151;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 50;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #374151;
+        }
+        .sidebar-logo svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            color: #8b5cf6;
+        }
+        .sidebar-logo h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar-nav {
+            flex: 1;
+        }
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+        .sidebar-section-title {
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #9ca3af;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+            transition: width 0.3s ease;
+        }
+        .sidebar-link:hover::before,
+        .sidebar-link.active::before {
+            width: 100%;
+        }
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: #374151;
+            color: white;
+            transform: translateX(5px);
+        }
+        .sidebar-link svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .sidebar-link:hover svg,
+        .sidebar-link.active svg {
+            transform: scale(1.1) rotate(5deg);
+        }
+        .sidebar-footer {
+            padding-top: 1.5rem;
+            border-top: 1px solid #374151;
+            margin-top: auto;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            background-color: #374151;
+            color: white;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #8b5cf6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-weight: 600;
+        }
+        .user-info {
+            flex: 1;
+        }
+        .user-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .user-role {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translateX(20px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+                height: 100vh;
+                overflow-y: auto;
+            }
+            .main-content {
+                margin-left: 0;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                padding: 1rem;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+            }
+            .sidebar.open + .main-content {
+                margin-left: 0;
+            }
+            .card {
+                padding: 1rem;
+            }
+        }
+        .background-dots {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .dot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            width: 5px;
+            height: 5px;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0.3;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-dots">
+        <div class="dot" style="top: 10%; left: 20%;"></div>
+        <div class="dot" style="top: 25%; left: 55%;"></div>
+        <div class="dot" style="top: 40%; left: 30%;"></div>
+        <div class="dot" style="top: 60%; left: 70%;"></div>
+        <div class="dot" style="top: 80%; left: 80%;"></div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-white">D MASTERS NETWORK</h2>
+        </div>
+        <nav>
+            <a href="index.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M4 6a2 2 0 012-2h2a2 2 0 
+                             012 2v2a2 2 0 01-2 2H6a2 2 0 
+                             01-2-2V6zm10 0a2 2 0 012-2h2a2 
+                             2 0 012 2v2a2 2 0 01-2 2h-2a2 2 
+                             0 01-2-2V6zM4 16a2 2 0 012-2h2a2 
+                             2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 
+                             01-2-2v-2zm10 0a2 2 0 012-2h2a2 
+                             2 0 012 2v2a2 2 0 01-2 2h-2a2 2 
+                             0 01-2-2v-2z"/>
+                </svg>
+                Dashboard
+            </a>
+            <a href="products.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 
+                             4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                Products
+            </a>
+            <a href="withdrawal.html" class="sidebar-link active">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 
+                             3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 
+                             0 2.08.402 2.599 1M12 8V7m0 1v8m0 
+                             0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 
+                             12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Withdrawal
+            </a>
+            <a href="sales.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 
+                             0 00-2 2v6a2 2 0 002 2h2a2 2 0 
+                             002-2zm0 0V9a2 2 0 012-2h2a2 2 
+                             0 012 2v10m-6 0a2 2 0 002 2h2a2 
+                             2 0 002-2m0 0V5a2 2 0 012-2h2a2 
+                             2 0 012 2v14a2 2 0 01-2 2h-2a2 
+                             2 0 01-2-2z"/>
+                </svg>
+                Sales
+            </a>
+            <a href="community.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 
+                             20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 
+                             20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 
+                             0a5.002 5.002 0 019.288 0M15 7a3 3 0 
+                             11-6 0 3 3 0 016 0zm6 3a2 2 0 
+                             11-4 0 2 2 0 014 0zM7 10a2 2 0 
+                             11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Community
+            </a>
+            <a href="faq.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 
+                             2.21 0 4 1.343 4 3 0 1.4-1.278 
+                             2.575-3.006 2.907-.542.104-.994.54-.994 
+                             1.093m0 3h.01M21 12a9 9 0 11-18 
+                             0 9 9 0 0118 0z"/>
+                </svg>
+                FAQ
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="max-w-7xl mx-auto">
+            <!-- Topbar -->
+            <div class="flex justify-between items-center mb-8 mt-4 md:mt-0 bg-gray-800/50 p-4 rounded-xl border border-gray-700">
+                <div class="flex items-center space-x-4">
+                    <!-- زر القائمة في الهاتف -->
+                    <button id="menuButton" class="md:hidden bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-2 rounded-lg hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" fill="none" 
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Withdrawal</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- زر الإشعارات -->
+                    <div class="relative">
+                        <button id="notificationButton" class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-2 rounded-lg hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 group relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </button>
+                        <!-- نافذة الإشعارات المنبثقة -->
+                        <div id="notificationDropdown" class="hidden fixed md:absolute top-16 right-0 mt-2 w-[90vw] md:w-80 bg-gray-800 rounded-xl shadow-xl z-50 border border-gray-700">
+                            <div class="p-4 border-b border-gray-700">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold">Notifications</h3>
+                                    <button class="text-sm text-blue-500 hover:text-blue-400">Mark all as read</button>
+                                </div>
+                            </div>
+                            <div class="max-h-[60vh] overflow-y-auto">
+                                <!-- قائمة الإشعارات -->
+                                <div class="p-4 hover:bg-gray-700/50 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium">Welcome to DMN!</p>
+                                            <p class="text-xs text-gray-400">Thank you for joining our community</p>
+                                            <p class="text-xs text-gray-500 mt-1">Just now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 border-t border-gray-700">
+                                <button class="w-full text-sm text-blue-500 hover:text-blue-400">View all notifications</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- الصورة الشخصية -->
+                    <div class="relative">
+                        <a href="profile.html" class="flex items-center space-x-2 focus:outline-none group">
+                            <div class="relative">
+                                <img src="public/profile.png" 
+                                     alt="Profile" 
+                                     class="w-10 h-10 rounded-full border-2 border-gray-700 group-hover:border-blue-500 transition-colors">
+                                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                            </div>
+                            <div class="hidden md:block text-right">
+                                <p class="text-sm font-medium">John Doe</p>
+                                <p class="text-xs text-gray-400">Admin</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Withdrawal Type Selection -->
+            <div class="flex space-x-4 mb-8">
+                <button id="profitsBtn" class="flex-1 bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                    Withdrawal Profits
+                </button>
+                <button id="dmnBtn" class="flex-1 bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors">
+                    Withdrawal DMN COIN
+                </button>
+            </div>
+
+            <!-- Profits Withdrawal Content -->
+            <div id="profitsContent">
+                <!-- Balance Card -->
+                <div class="stat-card p-6 rounded-xl bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 hover:border-blue-500/40 transition-all duration-300 group">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="p-2 rounded-lg bg-blue-500/20 group-hover:bg-blue-500/30 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-medium text-gray-400">Available Balance</h3>
+                                <p class="text-2xl font-bold text-white wallet-balance">$0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Withdrawal Form -->
+                <div class="card">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Withdraw Funds</h2>
+                        <div class="flex items-center space-x-2 text-sm text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Minimum withdrawal: $10</span>
+                        </div>
+                    </div>
+                    <form id="withdrawForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Account Address</label>
+                                <input type="text" id="accountAddress" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="Enter your wallet address">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Amount</label>
+                                <input type="number" id="withdrawAmount" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" placeholder="Enter amount">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Payment Method</label>
+                            <select class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500">
+                                <option value="">Select payment method</option>
+                                <option value="bank">Bank Transfer</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="crypto">Cryptocurrency</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between text-sm text-gray-400">
+                            <span>Processing time: 12-24 hours</span>
+                            <span>Fee: 2.5%</span>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-[1.02]">
+                            Withdraw Now
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- DMN COIN Withdrawal Content -->
+            <div id="dmnContent" class="hidden">
+                <!-- DMN Balance Card -->
+                <div class="card mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">DMN COIN Balance</p>
+                            <h3 class="text-2xl font-bold mt-1">0 DMN</h3>
+                        </div>
+                        <div class="bg-purple-500/10 p-4 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DMN Price Card -->
+                <div class="card mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">DMN COIN PRICE</p>
+                            <h3 class="text-2xl font-bold mt-1">100 DMN = $2.98</h3>
+                        </div>
+                        <div class="bg-yellow-500/10 p-4 rounded-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DMN Withdrawal Form -->
+                <div class="card">
+                    <h2 class="text-xl font-semibold mb-6">Withdraw DMN COIN</h2>
+                    <form class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Amount</label>
+                            <div class="relative">
+                                <input type="number" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" placeholder="0">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Wallet Address</label>
+                            <input type="text" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500" placeholder="Enter your wallet address">
+                        </div>
+                        <button type="submit" class="w-full bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors">
+                            Withdraw DMN
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="wallet.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initBalanceUser1();
+      showBalanceUser1('.wallet-balance');
+    
+      const form = document.getElementById('withdrawForm');
+      if (form) {
+        form.addEventListener('submit', e => {
+          e.preventDefault();
+    
+          const amt = parseFloat(document.getElementById('withdrawAmount').value) || 0;
+          const address = document.getElementById('accountAddress').value;
+    
+          if (amt < 10) {
+            alert('Minimum withdrawal is $10.');
+            return;
+          }
+    
+          if (!address.trim()) {
+            alert('Please enter your wallet address.');
+            return;
+          }
+    
+          withdrawUser1(amt);
+          showBalanceUser1('.wallet-balance');
+        });
+      }
+    });
+    </script>
+    
+
+    
+</body>
+</html>
+        

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #111827, #0b0f19);
+            min-height: 100vh;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.1) 1px, transparent 0),
+                linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 0),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 0);
+            background-size: 40px 40px, 40px 40px, 40px 40px;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        .card {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .sidebar {
+            background-color: #1f2937;
+            border-right: 1px solid #374151;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease-in-out;
+            z-index: 50;
+        }
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #374151;
+        }
+        .sidebar-logo svg {
+            width: 40px;
+            height: 40px;
+            margin-right: 1rem;
+            color: #8b5cf6;
+        }
+        .sidebar-logo h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #8b5cf6, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .sidebar-nav {
+            flex: 1;
+        }
+        .sidebar-section {
+            margin-bottom: 1.5rem;
+        }
+        .sidebar-section-title {
+            color: #6b7280;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+            padding-left: 1rem;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            color: #9ca3af;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-link:hover,
+        .sidebar-link.active {
+            background-color: #374151;
+            color: white;
+        }
+        .sidebar-link svg {
+            width: 20px;
+            height: 20px;
+            margin-right: 1rem;
+            transition: all 0.3s;
+        }
+        .sidebar-link:hover svg,
+        .sidebar-link.active svg {
+            transform: scale(1.1);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 1.5rem;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            }
+            .main-content {
+                margin-left: 0;
+                transition: margin-left 0.3s ease-in-out;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 10px rgba(0, 0, 0, 0.2);
+            }
+            .sidebar.open + .main-content {
+                margin-left: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-white">D MASTERS NETWORK</h2>
+        </div>
+        <nav>
+            <a href="index.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                </svg>
+                Dashboard
+            </a>
+            <a href="products.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                Products
+            </a>
+            <a href="withdrawal.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Withdrawal
+            </a>
+            <a href="sales.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Sales
+            </a>
+            <a href="community.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Community
+            </a>
+            <a href="faq.html" class="sidebar-link">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" 
+                     viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                          d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                FAQ
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="max-w-7xl mx-auto">
+            <!-- Topbar -->
+            <div class="flex justify-between items-center mb-8 mt-4 md:mt-0 bg-gray-800/50 p-4 rounded-xl border border-gray-700">
+                <div class="flex items-center space-x-4">
+                    <!-- زر القائمة في الهاتف -->
+                    <button id="menuButton" class="md:hidden bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-2 rounded-lg hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 group">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" fill="none" 
+                             viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                  d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                    <div>
+                        <h1 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">Profile</h1>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <!-- زر الإشعارات -->
+                    <div class="relative">
+                        <button id="notificationButton" class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 p-2 rounded-lg hover:from-blue-500/30 hover:to-purple-500/30 transition-all duration-300 border border-blue-500/20 hover:border-blue-500/40 group relative">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400 group-hover:text-purple-400 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+                        </button>
+                        <!-- نافذة الإشعارات المنبثقة -->
+                        <div id="notificationDropdown" class="hidden fixed md:absolute top-16 right-0 mt-2 w-[90vw] md:w-80 bg-gray-800 rounded-xl shadow-xl z-50 border border-gray-700">
+                            <div class="p-4 border-b border-gray-700">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-lg font-semibold">Notifications</h3>
+                                    <button class="text-sm text-blue-500 hover:text-blue-400">Mark all as read</button>
+                                </div>
+                            </div>
+                            <div class="max-h-[60vh] overflow-y-auto">
+                                <!-- قائمة الإشعارات -->
+                                <div class="p-4 hover:bg-gray-700/50 cursor-pointer">
+                                    <div class="flex items-start">
+                                        <div class="flex-shrink-0">
+                                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
+                                        </div>
+                                        <div class="ml-3">
+                                            <p class="text-sm font-medium">Welcome to DMN!</p>
+                                            <p class="text-xs text-gray-400">Thank you for joining our community</p>
+                                            <p class="text-xs text-gray-500 mt-1">Just now</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-4 border-t border-gray-700">
+                                <button class="w-full text-sm text-blue-500 hover:text-blue-400">View all notifications</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- الصورة الشخصية -->
+                    <div class="relative">
+                        <a href="profile.html" class="flex items-center space-x-2 focus:outline-none group">
+                            <div class="relative">
+                                <img src="public/profile.png" 
+                                     alt="Profile" 
+                                     class="w-10 h-10 rounded-full border-2 border-gray-700 group-hover:border-blue-500 transition-colors">
+                                <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                            </div>
+                            <div class="hidden md:block text-right">
+                                <p class="text-sm font-medium">John Doe</p>
+                                <p class="text-xs text-gray-400">Admin</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Content -->
+            <div class="card">
+                <div class="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
+                    <!-- صورة الملف الشخصي -->
+                    <div class="relative">
+                        <img src="public/profile.png" 
+                             alt="Profile" 
+                             class="w-32 h-32 rounded-full border-4 border-gray-800">
+                        <div class="absolute -bottom-2 -right-2 w-4 h-4 bg-green-500 rounded-full border-2 border-gray-800"></div>
+                    </div>
+
+                    <!-- معلومات الملف الشخصي -->
+                    <div class="flex-1 w-full">
+                        <h2 class="text-xl font-bold mb-6 text-center md:text-right">Profile Information</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Name</label>
+                                <input type="text" value="John Doe" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Email</label>
+                                <input type="email" value="john.doe@example.com" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" readonly>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Account Address</label>
+                                <input type="text" value="0x1234...5678" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" readonly>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Promo Code</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" id="promoCode" value="DMN2024" class="w-full bg-gray-700/50 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500" readonly>
+                                    <button onclick="copyPromoCode()" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const menuButton = document.getElementById('menuButton');
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+
+        // تفعيل قائمة البرجر مع تأثيرات محسنة
+        menuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+        });
+
+        // إغلاق القائمة عند النقر خارجها
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(e.target) && 
+                !menuButton.contains(e.target) && 
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+        });
+
+        // Set active link based on current page
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+            const sidebarLinks = document.querySelectorAll('.sidebar-link');
+            
+            sidebarLinks.forEach(link => {
+                const linkHref = link.getAttribute('href');
+                if (linkHref === currentPage) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        });
+
+        // وظيفة نسخ الكود الترويجي
+        function copyPromoCode() {
+            const promoCodeInput = document.getElementById('promoCode');
+            promoCodeInput.select();
+            document.execCommand('copy');
+            
+            // تغيير أيقونة الزر مؤقتاً للإشارة إلى نجاح النسخ
+            const button = promoCodeInput.nextElementSibling;
+            const originalSVG = button.innerHTML;
+            button.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+            `;
+            
+            // إعادة الأيقونة الأصلية بعد ثانيتين
+            setTimeout(() => {
+                button.innerHTML = originalSVG;
+            }, 2000);
+        }
+    </script>
+</body>
+</html> 
